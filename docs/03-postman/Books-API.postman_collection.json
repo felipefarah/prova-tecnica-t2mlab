@@ -1,0 +1,454 @@
+{
+  "info": {
+    "_postman_id": "80122dc1-2b01-49ac-9c00-86b349df1429",
+    "name": "Biblioteca Digital - Books API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "49921693"
+  },
+  "item": [
+    {
+      "name": "Functional Tests",
+      "item": [
+        {
+          "name": "TC_BOOKS_001 - GET /Books - Listar todos os livros com sucesso",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/Books",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "Books"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC_BOOKS_004 - GET /Books/{id} - Buscar livro existente",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/Books/{{bookId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "Books",
+                "{{bookId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC_BOOKS_007 - POST /Books - Criar livro com dados válidos",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"id\": 1001,\r\n  \"title\": \"Livro QA\",\r\n  \"description\": \"Livro criado para testes\",\r\n  \"pageCount\": 200,\r\n  \"excerpt\": \"Trecho de teste\",\r\n  \"publishDate\": \"2026-01-01T00:00:00.000Z\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/Books",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "Books"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC_BOOKS_011 - PUT /Books/{id} - Atualizar livro existente",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"id\": 1,\r\n  \"title\": \"Livro Atualizado\",\r\n  \"description\": \"Descrição Atualizada\",\r\n  \"pageCount\": 300,\r\n  \"excerpt\": \"Atualizado\",\r\n  \"publishDate\": \"2026-01-01T00:00:00.000Z\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/Books/{{bookId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "Books",
+                "{{bookId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC_BOOKS_014 - DELETE /Books/{id} - Excluir livro existente",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/Books/{{bookId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "Books",
+                "{{bookId}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Contract Tests",
+      "item": [
+        {
+          "name": "TC_BOOKS_002 - GET /Books - Validar schema da lista de livros",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/Books",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "Books"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC_BOOKS_008 - POST /Books - Validar schema do livro criado",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"id\": 1001,\r\n  \"title\": \"Livro QA\",\r\n  \"description\": \"Livro criado para testes\",\r\n  \"pageCount\": 200,\r\n  \"excerpt\": \"Trecho de teste\",\r\n  \"publishDate\": \"2026-01-01T00:00:00.000Z\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/Books",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "Books"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Performance Tests",
+      "item": [
+        {
+          "name": "TC_BOOKS_003 - GET /Books - Validar tempo de resposta da listagem",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/Books",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "Books"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Negative Tests",
+      "item": [
+        {
+          "name": "TC_BOOKS_005 - GET /Books/{id} - Buscar livro inexistente",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/Books/999999",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "Books",
+                "999999"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC_BOOKS_009 - POST /Books - Criar livro com campo obrigatório ausente",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"id\": 1002,\r\n  \"description\": \"Sem título\",\r\n  \"pageCount\": 100,\r\n  \"excerpt\": \"Teste\",\r\n  \"publishDate\": \"2026-01-01T00:00:00.000Z\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/Books",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "Books"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC_BOOKS_012 - PUT /Books/{id} - Atualizar livro inexistente",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"id\": 1,\r\n  \"title\": \"Livro Atualizado\",\r\n  \"description\": \"Descrição Atualizada\",\r\n  \"pageCount\": 300,\r\n  \"excerpt\": \"Atualizado\",\r\n  \"publishDate\": \"2026-01-01T00:00:00.000Z\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/Books/999999",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "Books",
+                "999999"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Boundary Tests",
+      "item": [
+        {
+          "name": "TC_BOOKS_010 - POST /Books - Criar livro com valor de borda",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"id\": 1003,\r\n  \"title\": \"\",\r\n  \"description\": \"\",\r\n  \"pageCount\": 0,\r\n  \"excerpt\": \"\",\r\n  \"publishDate\": \"1900-01-01T00:00:00.000Z\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/Books",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "Books"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Security Tests",
+      "item": [
+        {
+          "name": "TC_BOOKS_006 - GET /Books/{id} - Manipular IDs para validar IDOR",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/Books/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "Books",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC_BOOKS_017.1 - POST /Books - Validar proteção contra SQL Injection",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"id\": 3000,\r\n  \"title\": \"' OR '1'='1\",\r\n  \"description\": \"SQL Injection\",\r\n  \"pageCount\": 100,\r\n  \"excerpt\": \"Teste\",\r\n  \"publishDate\": \"2026-01-01T00:00:00.000Z\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/Books",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "Books"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC_BOOKS_017.2 - POST /Books - Validar proteção contra XSS",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"id\": 3001,\r\n  \"title\": \"<script>alert('xss')</script>\",\r\n  \"description\": \"XSS Test\",\r\n  \"pageCount\": 100,\r\n  \"excerpt\": \"Teste\",\r\n  \"publishDate\": \"2026-01-01T00:00:00.000Z\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/Books",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "Books"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Consistency Tests",
+      "item": [
+        {
+          "name": "TC_BOOKS_013 - PUT /Books/{id} - Validar idempotência da atualização",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"id\": 1,\r\n  \"title\": \"Livro Atualizado\",\r\n  \"description\": \"Descrição Atualizada\",\r\n  \"pageCount\": 300,\r\n  \"excerpt\": \"Atualizado\",\r\n  \"publishDate\": \"2026-01-01T00:00:00.000Z\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/Books/{{bookId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "Books",
+                "{{bookId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC_BOOKS_015 - DELETE /Books/{id} - Excluir recurso já removido",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/Books/{{bookId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "Books",
+                "{{bookId}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Integration Tests",
+      "item": [
+        {
+          "name": "TC_BOOKS_016 - Criar livro com autor inexistente e excluir livro com capa associada",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"id\": 2000,\r\n  \"title\": \"Livro Integração\",\r\n  \"description\": \"Teste integração\",\r\n  \"pageCount\": 100,\r\n  \"excerpt\": \"Teste\",\r\n  \"publishDate\": \"2026-01-01T00:00:00.000Z\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/Books",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "Books"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}
