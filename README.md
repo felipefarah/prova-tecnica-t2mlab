@@ -206,13 +206,31 @@ O que o pipeline faz, passo a passo:
 
 ### Como ver os resultados no GitHub
 
-Após a execução do pipeline, os resultados ficam disponíveis na aba **Actions** do repositório. Clique na execução desejada e baixe o artefato **allure-results**. Para visualizar o relatório, extraia o arquivo e rode localmente:
+Após a execução do pipeline, os resultados ficam disponíveis na aba **Actions** do repositório. Para visualizar:
 
-```bash
-allure serve caminho/para/allure-results
+1. Acesse a aba **Actions** no GitHub
+2. Clique na execução desejada
+3. Baixe o artefato **allure-results**
+4. Extraia o arquivo ZIP no seu computador
+5. Abra o terminal e rode o comando abaixo apontando para a pasta extraída
+
+**No PowerShell (Windows):**
+
+```powershell
+allure serve C:\Users\seu-usuario\Downloads\allure-results
 ```
 
-O arquivo de configuração do pipeline está em `.github/workflows/tests.yml`.
+**No Git Bash ou terminal Linux/Mac:**
+
+```bash
+allure serve /c/Users/seu-usuario/Downloads/allure-results
+```
+
+> **Atenção:** No Git Bash, use barras normais (`/`) no caminho. Se usar barras invertidas (`\`), o Allure não encontra a pasta e gera um relatório vazio.
+
+O relatório abre automaticamente no navegador com os detalhes de cada teste.
+
+O arquivo de configuração do pipeline está em `.github/workflows/executar-testes-automatizados.yml`.
 
 ## Como Adicionar Novos Testes
 
