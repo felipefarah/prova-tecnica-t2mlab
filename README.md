@@ -189,10 +189,17 @@ O que o pipeline faz, passo a passo:
 1. Baixa o código do repositório
 2. Instala o Java 21
 3. Executa todos os testes (`mvn clean test`)
-4. Salva os resultados como artefato para download
-5. Gera e publica o relatório Allure no GitHub Pages
+4. Salva os resultados do Allure como artefato para download
 
-O arquivo de configuração está em `.github/workflows/tests.yml`.
+### Como ver os resultados no GitHub
+
+Após a execução do pipeline, os resultados ficam disponíveis na aba **Actions** do repositório. Clique na execução desejada e baixe o artefato **allure-results**. Para visualizar o relatório, extraia o arquivo e rode localmente:
+
+```bash
+allure serve caminho/para/allure-results
+```
+
+O arquivo de configuração do pipeline está em `.github/workflows/tests.yml`.
 
 ## Como Adicionar Novos Testes
 
