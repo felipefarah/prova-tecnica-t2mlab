@@ -28,14 +28,18 @@ prova-tecnica-t2mlab/
 │   │   ├── Analise-Critica-dos-Requisitos.pdf
 │   │   ├── Estrategia-de-Testes.pdf
 │   │   └── Analise-de-Impacto-e-Integracoes.pdf
-│   ├── 02-planejamento/         # Plano de testes e cenários BDD
-│   │   ├── Cenarios-Gherkin.pdf
+│   ├── 02-planejamento/         # Plano de testes
 │   │   └── Plano-de-Testes.xlsx
-│   ├── 03-postman/              # Collection e Environment do Postman
+│   ├── 03-execucao-testes-postman/  # Execução dos testes com Postman
 │   │   ├── Books-API.postman_collection.json
-│   │   └── BibliotecaDigital.postman_environment.json
-│   └── 04-referencia/           # Documento original da prova técnica
-│       └── Prova-Tecnica-QA-Pleno.pdf
+│   │   ├── BibliotecaDigital.postman_environment.json
+│   │   ├── Cenarios-Gherkin.pdf
+│   │   ├── Planilha de Testes Executados.xlsx
+│   │   └── Parte 3_3.2-Relatório de Bugs.pdf
+│   ├── 04-referencia/           # Documento original da prova técnica
+│   │   └── Prova-Tecnica-QA-Pleno.pdf
+│   └── 05-questoes-situacionais/  # Respostas das questões situacionais
+│       └── Parte 5-Questões Situacionais.docx
 ├── src/test/java/               # Código dos testes automatizados
 │   └── com/bibliotecadigital/
 │       ├── clients/             # Chamadas para a API (Client Layer)
@@ -49,7 +53,7 @@ prova-tecnica-t2mlab/
 │   ├── fixtures/                # Dados em formato JSON
 │   └── schemas/                 # Schemas para validação de contrato
 ├── .github/workflows/           # Pipeline de CI/CD (GitHub Actions)
-│   └── tests.yml
+│   └── executar-testes-automatizados.yml
 ├── .mvn/wrapper/                # Maven Wrapper (executa Maven sem instalar)
 ├── pom.xml                      # Dependências e configuração do projeto
 ├── mvnw                         # Script para rodar Maven no Linux/Mac
@@ -62,9 +66,10 @@ prova-tecnica-t2mlab/
 | Pasta | O que contém |
 |-------|--------------|
 | `docs/01-requisitos` | Análise crítica dos requisitos, estratégia de testes e análise de impacto entre os módulos da API |
-| `docs/02-planejamento` | Cenários de teste escritos em formato Gherkin (BDD) e a planilha com o plano de testes completo |
-| `docs/03-postman` | Arquivos para importar no Postman e executar os testes manualmente |
+| `docs/02-planejamento` | Planilha com o plano de testes completo |
+| `docs/03-execucao-testes-postman` | Collection e Environment do Postman, cenários Gherkin, planilha de testes executados e relatório de bugs encontrados |
 | `docs/04-referencia` | O enunciado original da prova técnica |
+| `docs/05-questoes-situacionais` | Respostas das questões situacionais (Parte 5 da prova) |
 | `src/test/java/.../clients` | Classes que encapsulam as chamadas HTTP para cada recurso da API |
 | `src/test/java/.../builders` | Classe que monta os payloads (dados JSON) usando o padrão Builder |
 | `src/test/java/.../fixtures` | Dados de teste pré-definidos e reutilizáveis em vários cenários |
@@ -169,6 +174,29 @@ src/test/resources/
     ├── book-schema.json
     └── books-list-schema.json
 ```
+
+## Como importar a Collection e o Environment no Postman
+
+Os arquivos para execução manual dos testes estão na pasta `docs/03-execucao-testes-postman/`. Para importá-los no Postman:
+
+### Importar a Collection (os testes)
+
+1. Abra o Postman
+2. Clique no botão **Import** (canto superior esquerdo)
+3. Arraste o arquivo `Books-API.postman_collection.json` para a janela, ou clique em **Upload Files** e selecione o arquivo
+4. Clique em **Import**
+5. A collection "Biblioteca Digital - Books API" vai aparecer na barra lateral esquerda com todas as pastas e requisições organizadas
+
+### Importar o Environment (as variáveis)
+
+1. No Postman, clique no ícone de **engrenagem** (⚙️) no canto superior direito, ou clique no dropdown de ambientes
+2. Clique em **Import**
+3. Selecione o arquivo `BibliotecaDigital.postman_environment.json`
+4. Após importar, selecione o ambiente **BibliotecaDigital_ENV** no dropdown de ambientes (canto superior direito)
+
+### Pronto para usar
+
+Após importar os dois arquivos, você pode executar qualquer requisição diretamente. O ambiente já vem configurado com a variável `baseUrl` apontando para `https://fakerestapi.azurewebsites.net/api/v1`.
 
 ## Relatórios Allure
 
