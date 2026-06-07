@@ -6,6 +6,19 @@ Projeto de automação de testes para a API de gerenciamento de livros da Biblio
 
 Este projeto executa testes automatizados contra a API de livros, validando se ela funciona corretamente. São 28 testes cobrindo criação, consulta, atualização e exclusão de livros, além de testes de segurança, performance e integração entre módulos.
 
+## Por que essas tecnologias foram escolhidas?
+
+| Tecnologia | O que é | Por que foi escolhida |
+|---|---|---|
+| **Java 21** | Linguagem de programação | Versão LTS (Long-Term Support) mais recente, com suporte garantido por anos. É a linguagem mais utilizada em automação de testes em empresas, com vasta comunidade e documentação disponível |
+| **Maven** | Gerenciador de dependências e build | Gerencia todas as bibliotecas do projeto automaticamente, padroniza a execução dos testes com um único comando (`mvn clean test`) e facilita a integração com pipelines de CI/CD |
+| **JUnit 5** | Framework de testes | É o padrão da indústria para testes em Java. Oferece recursos como testes parametrizados, organização por anotações e integração nativa com Maven e IDEs |
+| **Rest Assured** | Biblioteca para testes de API | Permite fazer chamadas HTTP (GET, POST, PUT, DELETE) e validar respostas de forma simples e legível. É a biblioteca mais popular para testes de API REST em Java |
+| **Jackson** | Serialização de objetos | Converte objetos Java para JSON e vice-versa. Necessário para montar e interpretar os payloads enviados e recebidos da API |
+| **JSON Schema Validator** | Validação de contrato | Verifica se a estrutura dos dados retornados pela API segue o formato esperado (campos corretos, tipos corretos). Garante que a API não quebre o "contrato" com quem a consome |
+| **Allure Reports** | Geração de relatórios | Gera relatórios visuais em HTML com detalhes de cada teste executado, facilitando a análise dos resultados por pessoas técnicas e não-técnicas |
+| **GitHub Actions** | Pipeline de CI/CD | Executa os testes automaticamente no GitHub sempre que o código é atualizado, garantindo que nenhuma alteração quebre o que já estava funcionando |
+
 ## Conteúdo do Repositório
 
 ```
