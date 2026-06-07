@@ -221,3 +221,97 @@ void shouldDoSomething() {
     response.then().statusCode(200);
 }
 ```
+
+## Observações Importantes sobre os Resultados
+
+Todos os 28 testes passam com sucesso, mas isso **não significa que a API está perfeita**. Durante a execução dos testes, foram identificados diversos comportamentos que em uma API real seriam considerados problemas. Os testes foram construídos para **documentar o comportamento observado** e não simplesmente para "forçar" que tudo passe.
+
+### Como os cenários estão sendo validados?
+
+Cada teste verifica o que a API realmente faz (comportamento observado) e aceita como válido o resultado retornado **ou** o resultado ideal. Por exemplo: se um teste espera status 404 mas a API retorna 200, o teste aceita ambos e registra uma observação de que o comportamento da API difere do esperado em uma aplicação real.
+
+Essa abordagem foi adotada porque a API utilizada (FakeRestAPI) é uma API pública de simulação que não implementa todas as regras de negócio de um sistema real. Os testes passam porque estão validando corretamente o comportamento real da API, e ao mesmo tempo deixam documentado o que deveria ser diferente.
+
+### Observações identificadas durante os testes
+
+#### Exclusão de livros (DeleteBooksTest)
+
+| O que foi testado | O que a API faz | O que deveria fazer em uma API real |
+|---|---|---|
+| Excluir um livro que já foi removido | Retorna status 200 (sucesso) | Deveria retornar status 404 (não encontrado) |
+
+**Por que o teste passa?** O teste aceita tanto 200 quanto 404 como resposta válida, e registra que a API não diferencia entre um recurso existente e um já removido.
+
+---
+
+#### Fluxo completo E2E (E2ETest)
+
+| O que foi testado | O que a API faz | O que deveria fazer em uma API real |
+|---|---|---|
+| Criar um livro e depois consultá-lo via GET | A API não persiste os dados criados. O livro criado via POST não fica disponível para consulta posterior | Deveria armazenar o livro e retorná-lo em consultas futuras |
+| Excluir um livro e depois consultar via GET | Após exclusão, o livro ainda pode ser encontrado via GET | Deveria retornar status 404 após a exclusão |
+
+**Por que o teste passa?** A criação é validada pela resposta do próprio POST (que retorna os dados corretamente). Para o GET após exclusão, o teste aceita tanto 200 quanto 404, documentando que a FakeRestAPI não persiste alterações.
+
+---
+
+#### Acesso indevido por ID (GetBookByIdTest)
+
+| O que foi testado | O que a API faz | O que deveria fazer em uma API real |
+|---|---|---|
+| Acessar livros de outros usuários manipulando o ID na URL | Retorna os dados de qualquer livro, independente de quem está acessando | Deveria verificar se o usuário tem permissão para acessar aquele recurso específico |
+
+**Por que o teste passa?** O teste verifica que a API responde com status 200 para qualquer ID válido, e documenta que não existe controle de acesso. Em um sistema real, isso seria uma vulnerabilidade chamada IDOR (Insecure Direct Object Reference).
+
+---
+
+#### Integração entre módulos (IntegrationTest)
+
+| O que foi testado | O que a API faz | O que deveria fazer em uma API real |
+|---|---|---|
+| Criar um livro associado a um autor que não existe | Aceita a criação normalmente, sem verificar se o autor existe | Deveria rejeitar com status 400 ou 422, informando que o autor não foi encontrado |
+| Excluir um livro que possui capa associada | Exclui o livro, mas a capa permanece no sistema sem vínculo (registro órfão) | Deveria excluir a capa junto (cascade delete) ou impedir a exclusão enquanto houver dados vinculados |
+
+**Por que o teste passa?** Os testes aceitam o comportamento observado (criação sem validação e exclusão sem cascade) e documentam que a API não implementa validação de integridade referencial entre módulos.
+
+---
+
+#### Criação de livros com dados incompletos (PostBooksTest)
+
+| O que foi testado | O que a API faz | O que deveria fazer em uma API real |
+|---|---|---|
+| Enviar um livro sem o campo "title" (título) | Aceita e cria o livro mesmo sem o título | Deveria rejeitar com status 400, informando que o campo é obrigatório |
+
+**Por que o teste passa?** O teste aceita tanto 200 quanto 400 como resposta, e registra que a API não valida campos obrigatórios. Em um sistema real, isso permitiria cadastrar livros com informações incompletas.
+
+---
+
+#### Atualização de livros inexistentes (PutBooksTest)
+
+| O que foi testado | O que a API faz | O que deveria fazer em uma API real |
+|---|---|---|
+| Enviar uma atualização para um livro com ID que não existe | Retorna status 200 (sucesso) | Deveria retornar status 404 (não encontrado) |
+
+**Por que o teste passa?** O teste aceita tanto 200 quanto 404, e documenta que a API não verifica se o recurso existe antes de "atualizar".
+
+---
+
+#### Segurança - SQL Injection e XSS (SecurityTest)
+
+| O que foi testado | O que a API faz | O que deveria fazer em uma API real |
+|---|---|---|
+| Enviar um comando SQL malicioso no campo título (`' OR '1'='1`) | Aceita e armazena o texto literalmente, sem executar como comando SQL | Comportamento correto — o texto é tratado apenas como texto |
+| Enviar um script malicioso no campo título (`<script>alert('xss')</script>`) | Aceita e armazena o script como texto, sem rejeitá-lo | Deveria sanitizar (limpar) o conteúdo ou rejeitá-lo. A proteção contra execução do script fica por conta do front-end/consumidor da API |
+
+**Por que o teste passa?** Para SQL Injection, a API se comporta corretamente ao tratar o conteúdo como texto puro. Para XSS, a API não rejeita o payload mas também não executa o script — porém em um sistema real seria ideal que a API sanitizasse o conteúdo antes de armazená-lo.
+
+---
+
+### Resumo
+
+Esses comportamentos foram **intencionalmente documentados nos testes** para demonstrar que:
+
+1. A automação não apenas "faz os testes passarem" — ela identifica e registra problemas reais
+2. Os cenários foram pensados para cobrir situações que causariam falhas em produção
+3. A FakeRestAPI é uma API de simulação e não implementa todas as regras esperadas de um sistema real
+4. Em um ambiente de projeto real, cada uma dessas observações geraria um **relatório de bug** para o time de desenvolvimento

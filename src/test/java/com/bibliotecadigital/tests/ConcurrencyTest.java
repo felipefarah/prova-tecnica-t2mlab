@@ -2,6 +2,7 @@ package com.bibliotecadigital.tests;
 
 import com.bibliotecadigital.clients.BooksClient;
 import com.bibliotecadigital.utils.Environment;
+import com.bibliotecadigital.utils.TestLogger;
 import io.qameta.allure.Description;
 import io.qameta.allure.Epic;
 import io.qameta.allure.Feature;
@@ -24,6 +25,9 @@ public class ConcurrencyTest {
     @Description("Validar que a API suporta no mínimo 50 requisições simultâneas sem erro 500, sem exceções e com tempo aceitável")
     void shouldHandleConcurrentRequests() throws InterruptedException, ExecutionException {
         int totalRequests = Environment.getConcurrentRequests();
+        TestLogger.logTestStart("Concorrência - Executar " + totalRequests + " requisições simultâneas ao GET /Books");
+        TestLogger.logRequest("GET", "/Books (x" + totalRequests + " simultâneas)", null);
+
         ExecutorService executor = Executors.newFixedThreadPool(totalRequests);
         List<Future<Response>> futures = new ArrayList<>();
 
@@ -50,23 +54,27 @@ public class ConcurrencyTest {
         long totalTime = System.currentTimeMillis() - startTime;
         executor.shutdown();
 
-        // Validar: sem exceções
-        assertTrue(exceptions.isEmpty(),
-                "Não devem ocorrer exceções. Encontradas: " + exceptions.size());
+        System.out.println("  Respostas: " + responses.size() + "/" + totalRequests);
+        System.out.println("  Exceções:  " + exceptions.size());
+        System.out.println("  Tempo:     " + totalTime + "ms");
 
-        // Validar: sem erro 500
-        long serverErrors = responses.stream()
-                .filter(r -> r.getStatusCode() >= 500)
-                .count();
-        assertEquals(0, serverErrors,
-                "Não deve haver erros 500. Encontrados: " + serverErrors);
+        long serverErrors = responses.stream().filter(r -> r.getStatusCode() >= 500).count();
+        System.out.println("  Erros 500: " + serverErrors);
 
-        // Validar: tempo aceitável (30 segundos para 50 requests)
-        assertTrue(totalTime < 30000,
-                "Tempo total deve ser menor que 30s. Obtido: " + totalTime + "ms");
-
-        // Validar: todas as respostas obtidas
-        assertEquals(totalRequests, responses.size(),
-                "Todas as " + totalRequests + " requisições devem retornar resposta");
+        try {
+            assertTrue(exceptions.isEmpty(),
+                    "Não devem ocorrer exceções. Encontradas: " + exceptions.size());
+            assertEquals(0, serverErrors,
+                    "Não deve haver erros 500. Encontrados: " + serverErrors);
+            assertTrue(totalTime < 30000,
+                    "Tempo total deve ser menor que 30s. Obtido: " + totalTime + "ms");
+            assertEquals(totalRequests, responses.size(),
+                    "Todas as " + totalRequests + " requisições devem retornar resposta");
+            TestLogger.logPass();
+        } catch (AssertionError e) {
+            TestLogger.logFail(totalRequests + " respostas sem erros em < 30s",
+                    "respostas=" + responses.size() + " erros500=" + serverErrors + " tempo=" + totalTime + "ms");
+            throw e;
+        }
     }
 }

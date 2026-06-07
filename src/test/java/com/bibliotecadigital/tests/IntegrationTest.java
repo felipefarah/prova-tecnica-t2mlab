@@ -4,6 +4,7 @@ import com.bibliotecadigital.clients.AuthorsClient;
 import com.bibliotecadigital.clients.BooksClient;
 import com.bibliotecadigital.clients.CoverPhotosClient;
 import com.bibliotecadigital.fixtures.BookFixtures;
+import com.bibliotecadigital.utils.TestLogger;
 import io.qameta.allure.Description;
 import io.qameta.allure.Epic;
 import io.qameta.allure.Feature;
@@ -31,47 +32,59 @@ public class IntegrationTest {
 
     @Test
     @DisplayName("TC_BOOKS_016.1 - Criar livro utilizando autor inexistente")
-    @Description("Simular criação de livro associado a autor inexistente e documentar comportamento. A FakeRestAPI não valida existência de autores na criação de livros.")
+    @Description("Simular criação de livro associado a autor inexistente e documentar comportamento")
     void shouldDocumentBehaviorWhenCreatingBookWithNonExistentAuthor() {
-        // Verificar que o autor com ID 99999 não existe
-        Response authorsResponse = authorsClient.getAuthorsByBookId(99999);
-
-        // Criar livro que teoricamente estaria associado ao autor inexistente
         var bookPayload = BookFixtures.bookForIntegration();
-        Response createResponse = booksClient.createBook(bookPayload);
+        TestLogger.logTestStart("TC_BOOKS_016.1 - Criar livro utilizando autor inexistente");
+        TestLogger.logRequest("GET", "/Authors/authors/books/99999", null);
 
-        // A FakeRestAPI não implementa validação de integridade referencial.
-        // O livro é criado mesmo sem autor válido associado.
-        // Em uma API real, deveria retornar erro (400 ou 422).
+        Response authorsResponse = authorsClient.getAuthorsByBookId(99999);
+        System.out.println("  Authors:  status " + authorsResponse.getStatusCode() + " | " + authorsResponse.getBody().asString());
+
+        TestLogger.logRequest("POST", "/Books", bookPayload);
+        Response createResponse = booksClient.createBook(bookPayload);
+        TestLogger.logResponse(createResponse);
+
         int statusCode = createResponse.getStatusCode();
-        assertTrue(
-                statusCode == 200 || statusCode == 400 || statusCode == 422,
-                "Comportamento observado: API permite criação sem validar autor. Status: " + statusCode
-        );
+        try {
+            assertTrue(statusCode == 200 || statusCode == 400 || statusCode == 422,
+                    "Comportamento observado. Status: " + statusCode);
+            System.out.println("  Obs:      API não valida existência do autor. Livro criado sem restrição.");
+            TestLogger.logPass();
+        } catch (AssertionError e) {
+            TestLogger.logFail("status 200, 400 ou 422", "status " + statusCode);
+            throw e;
+        }
     }
 
     @Test
     @DisplayName("TC_BOOKS_016.2 - Excluir livro com capa associada")
     @Description("Excluir livro que possui capa associada e validar comportamento dos dados relacionados")
     void shouldDocumentBehaviorWhenDeletingBookWithAssociatedCover() {
-        // Verificar capas associadas ao livro ID 1
+        TestLogger.logTestStart("TC_BOOKS_016.2 - Excluir livro com capa associada");
+        TestLogger.logRequest("GET", "/CoverPhotos/books/covers/1", null);
+
         Response coversBeforeDelete = coverPhotosClient.getCoverPhotosByBookId(1);
-        int coversStatusBefore = coversBeforeDelete.getStatusCode();
+        System.out.println("  Capas antes:  status " + coversBeforeDelete.getStatusCode() + " | " + coversBeforeDelete.getBody().asString());
 
-        // Excluir o livro
+        TestLogger.logRequest("DELETE", "/Books/1", null);
         Response deleteResponse = booksClient.deleteBook(1);
-        deleteResponse.then().statusCode(200);
+        TestLogger.logResponse(deleteResponse);
 
-        // Verificar se capas ainda existem após exclusão do livro
+        TestLogger.logRequest("GET", "/CoverPhotos/books/covers/1 (após exclusão)", null);
         Response coversAfterDelete = coverPhotosClient.getCoverPhotosByBookId(1);
-        int coversStatusAfter = coversAfterDelete.getStatusCode();
+        System.out.println("  Capas depois: status " + coversAfterDelete.getStatusCode() + " | " + coversAfterDelete.getBody().asString());
 
-        // A FakeRestAPI não implementa cascade delete nem validação de integridade.
-        // As capas permanecem mesmo após exclusão do livro (registros órfãos).
-        // Documentando comportamento observado.
-        assertTrue(
-                coversStatusAfter == 200 || coversStatusAfter == 404,
-                "Comportamento observado: capas podem permanecer órfãs. Status: " + coversStatusAfter
-        );
+        int coversStatusAfter = coversAfterDelete.getStatusCode();
+        try {
+            deleteResponse.then().statusCode(200);
+            assertTrue(coversStatusAfter == 200 || coversStatusAfter == 404,
+                    "Comportamento observado. Status capas: " + coversStatusAfter);
+            System.out.println("  Obs:      Capas permanecem após exclusão do livro (registros órfãos). Sem cascade delete.");
+            TestLogger.logPass();
+        } catch (AssertionError e) {
+            TestLogger.logFail("exclusão com status 200, capas com status 200 ou 404", "status " + coversStatusAfter);
+            throw e;
+        }
     }
 }

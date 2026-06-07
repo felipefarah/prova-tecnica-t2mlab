@@ -1,6 +1,7 @@
 package com.bibliotecadigital.tests;
 
 import com.bibliotecadigital.clients.BooksClient;
+import com.bibliotecadigital.utils.TestLogger;
 import io.qameta.allure.Description;
 import io.qameta.allure.Epic;
 import io.qameta.allure.Feature;
@@ -28,13 +29,23 @@ public class ParameterizedBooksTest {
     @DisplayName("Parametrizado - GET /Books/{id}")
     @Description("Executar GET /Books/{id} para múltiplos IDs válidos e validar retorno")
     void shouldGetBookByMultipleIds(int bookId) {
-        Response response = booksClient.getBookById(bookId);
+        TestLogger.logTestStart("Parametrizado - GET /Books/" + bookId);
+        TestLogger.logRequest("GET", "/Books/" + bookId, null);
 
-        response.then()
-                .statusCode(200)
-                .body("id", equalTo(bookId))
-                .body("title", is(notNullValue()))
-                .body("pageCount", is(notNullValue()))
-                .body("publishDate", is(notNullValue()));
+        Response response = booksClient.getBookById(bookId);
+        TestLogger.logResponse(response);
+
+        try {
+            response.then()
+                    .statusCode(200)
+                    .body("id", equalTo(bookId))
+                    .body("title", is(notNullValue()))
+                    .body("pageCount", is(notNullValue()))
+                    .body("publishDate", is(notNullValue()));
+            TestLogger.logPass();
+        } catch (AssertionError e) {
+            TestLogger.logFail("status 200 com id=" + bookId, "status " + response.getStatusCode());
+            throw e;
+        }
     }
 }
